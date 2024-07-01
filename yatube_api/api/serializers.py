@@ -44,12 +44,6 @@ class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
         fields = ('user', 'following')
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Follow.objects.all(),
-                fields=('user', 'following')
-            )
-        ]
 
     def create(self, validated_data):
         user = validated_data.get('user')
@@ -59,6 +53,4 @@ class FollowSerializer(serializers.ModelSerializer):
                 'Подписка на самого себя запрещена.'
             )
         follow, created = Follow.objects.get_or_create(**validated_data)
-        if not created:
-            raise serializers.ValidationError('Подписка уже существует.')
         return follow

@@ -2,6 +2,11 @@ from rest_framework import permissions
 
 
 class AuthorOrReadOnly(permissions.BasePermission):
+    """
+    Разрешение на чтение объектов и получение списка объектов.
+    Редактирование, удаление возможно только автором.
+    Создание возможно аутентифицированным пользователем.
+    """
 
     def has_permission(self, request, view):
         return (
