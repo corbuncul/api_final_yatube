@@ -33,18 +33,18 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (AuthorOrReadOnly,)
 
-    def get_queryset(self):
-        post_id = self.kwargs.get("post_id")
-        post = get_object_or_404(
-            Post.objects.prefetch_related('comments'), pk=post_id
+    def get_post(self):
+        return get_object_or_404(
+            Post.objects.prefetch_related('comments'),
+            pk=self.kwargs.get("post_id")
         )
-        new_queryset = post.comments
-        return new_queryset
+
+    def get_queryset(self):
+        post = self.get_post()
+        return post.comments
 
     def perform_create(self, serializer):
-        post_id = self.kwargs.get("post_id")
-        post = get_object_or_404(Post, pk=post_id)
-        serializer.save(post=post, author=self.request.user)
+        serializer.save(post=self.get_post(), author=self.request.user)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
